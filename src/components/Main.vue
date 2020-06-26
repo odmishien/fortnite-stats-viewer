@@ -33,7 +33,6 @@ export default {
           }
         })
         .then(res => {
-          console.log(res.data);
           this.result = res.data;
         });
     },
