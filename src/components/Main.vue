@@ -6,7 +6,7 @@
       <b-form-input id="account-id" v-model="accountID" placeholder></b-form-input>
     </b-form-group>
     <b-button @click="getGlobalStats(accountID)" variant="success">通算成績を見る</b-button>
-    <Result :result="result" v-show="result"/>
+    <Result :result="result" v-if="result"/>
   </b-container>
 </template>
 
