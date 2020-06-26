@@ -1,8 +1,8 @@
 <template>
   <b-container fluid>
     <h2>Fortnite-stats-viewer</h2>
-    <b-form-group label="アカウントID" label-for="account-id">
-      <p class="text-muted">アカウントIDは<a href="https://www.epicgames.com/account/personal?productName=epicgames&lang=ja">ここ</a>から確認できます</p>
+    <b-form-group label="EpicアカウントID" label-for="account-id">
+      <p class="text-muted">EpicアカウントIDは<a href="https://www.epicgames.com/account/personal?productName=epicgames&lang=ja">ここ</a>から確認できます</p>
       <b-form-input id="account-id" v-model="accountID" placeholder></b-form-input>
     </b-form-group>
     <b-button @click="getGlobalStats(accountID)" variant="success">通算成績を見る</b-button>
@@ -27,7 +27,7 @@ export default {
   methods: {
     getGlobalStats(id) {
       axios
-        .get("http://localhost:8081/global-stats", {
+        .get("https://fortnite-stats-viewer-api.herokuapp.com/global-stats", {
           params: {
             account_id: id
           }
@@ -40,7 +40,7 @@ export default {
     // とりあえずrecentMatchesは非対応
     getRecentMatches(id) {
       axios
-        .get("http://localhost:8081/recent-matches", {
+        .get("https://fortnite-stats-viewer-api.herokuapp.com/recent-matches", {
           params: {
             account_id: id
           }
