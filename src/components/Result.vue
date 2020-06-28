@@ -3,140 +3,67 @@
   <b-container align-h="center">
     <b-row class="my-5">
       <b-col cols="12">
-        <h1>ユーザー名: {{userName}} (Lv.{{level}})</h1>
+        <h3>{{userName}} (Lv.{{level}})</h3>
       </b-col>
     </b-row>
-    <hr>
+    <hr />
     <b-row class="my-5">
       <b-col cols="12">
-        <h2>ソロ通算</h2>
+        <BarChart :chartData="killRateData" />
       </b-col>
-      <b-col cols="4">
-        <h4>キル数</h4>
-        <br />
-        <h2>{{resultSolo.kills}}</h2>
-      </b-col>
-      <b-col cols="4">
-        <h4>試合数</h4>
-        <br />
-        <h2>{{resultSolo.matchesplayed}}</h2>
-      </b-col>
-      <b-col cols="4">
-        <h4>キルレート</h4>
-        <br />
-        <h2>{{resultSolo.kd}} kill/match</h2>
-      </b-col>
-    </b-row>
-
-    <b-row class="my-3">
       <b-col cols="12">
-        <h4>プレイ時間</h4>
-        <br />
-        <h2>{{resultSolo.minutesplayed / 60}} 時間</h2>
+        <h4>キルレート</h4>
       </b-col>
     </b-row>
-
-    <b-row class="my-3">
-      <b-col cols="6">
-        <h4>ビクロ</h4>
-        <br />
-        <h2>{{resultSolo.placetop1}} 回</h2>
-      </b-col>
-      <b-col cols="6">
-        <h4>ビクロレート</h4>
-        <br />
-        <h2>{{resultSolo.winrate}}</h2>
-      </b-col>
-    </b-row>
-    <hr>
+    <hr />
     <b-row class="my-5">
       <b-col cols="12">
-        <h2>デュオ通算</h2>
+        <BarChart :chartData="killData" />
       </b-col>
-      <b-col cols="4">
-        <h4>キル数</h4>
-        <br />
-        <h2>{{resultDuo.kills}}</h2>
-      </b-col>
-      <b-col cols="4">
-        <h4>試合数</h4>
-        <br />
-        <h2>{{resultDuo.matchesplayed}}</h2>
-      </b-col>
-      <b-col cols="4">
-        <h4>キルレート</h4>
-        <br />
-        <h2>{{resultDuo.kd}} kill/match</h2>
-      </b-col>
-    </b-row>
-
-    <b-row class="my-3">
       <b-col cols="12">
-        <h4>プレイ時間</h4>
-        <br />
-        <h2>{{resultDuo.minutesplayed / 60}} 時間</h2>
+        <h4>キル数</h4>
       </b-col>
     </b-row>
-
-    <b-row class="my-3">
-      <b-col cols="6">
-        <h4>ビクロ</h4>
-        <br />
-        <h2>{{resultDuo.placetop1}} 回</h2>
-      </b-col>
-      <b-col cols="6">
-        <h4>ビクロレート</h4>
-        <br />
-        <h2>{{resultDuo.winrate}}</h2>
-      </b-col>
-    </b-row>
-    <hr>
+    <hr />
     <b-row class="my-5">
       <b-col cols="12">
-        <h2>スクワッド通算</h2>
+        <BarChart :chartData="matchNumData" />
       </b-col>
-      <b-col cols="4">
-        <h4>キル数</h4>
-        <br />
-        <h2>{{resultSquad.kills}}</h2>
-      </b-col>
-      <b-col cols="4">
-        <h4>試合数</h4>
-        <br />
-        <h2>{{resultSquad.matchesplayed}}</h2>
-      </b-col>
-      <b-col cols="4">
-        <h4>キルレート</h4>
-        <br />
-        <h2>{{resultSquad.kd}} kill/match</h2>
-      </b-col>
-    </b-row>
-
-    <b-row class="my-3">
       <b-col cols="12">
-        <h4>プレイ時間</h4>
-        <br />
-        <h2>{{resultSquad.minutesplayed / 60}} 時間</h2>
+        <h4>試合数</h4>
       </b-col>
     </b-row>
+    <hr />
 
-    <b-row class="my-3">
-      <b-col cols="6">
-        <h4>ビクロ</h4>
-        <br />
-        <h2>{{resultSquad.placetop1}} 回</h2>
+    <b-row class="my-5">
+      <b-col cols="12">
+        <BarChart :chartData="placeTop1Data" />
       </b-col>
-      <b-col cols="6">
-        <h4>ビクロレート</h4>
-        <br />
-        <h2>{{resultSquad.winrate}}</h2>
+      <b-col cols="12">
+        <h4>ビクロ回数</h4>
+      </b-col>
+    </b-row>
+    <hr />
+
+    <b-row class="my-5">
+      <b-col cols="12">
+        <BarChart :chartData="minutesplayedData" />
+      </b-col>
+      <b-col cols="12">
+        <h4>プレイ時間(h)</h4>
       </b-col>
     </b-row>
   </b-container>
 </template>
 <script>
+import BarChart from "./BarChart";
+const barLabel = ["ソロ", "デュオ", "スクワッド"];
+const barColor = ["#ff386f", "#fff336", "#6981ff"];
 export default {
   name: "Result",
+  components: {
+    BarChart
+  },
   props: {
     result: Object
   },
@@ -144,6 +71,71 @@ export default {
     return {
       userName: this.result.name,
       level: this.result.account.level,
+      killRateData: {
+        labels: barLabel,
+        datasets: [
+          {
+            data: [
+              this.result.global_stats.solo.kd,
+              this.result.global_stats.duo.kd,
+              this.result.global_stats.squad.kd
+            ],
+            backgroundColor: barColor
+          }
+        ]
+      },
+      killData: {
+        labels: barLabel,
+        datasets: [
+          {
+            data: [
+              this.result.global_stats.solo.kills,
+              this.result.global_stats.duo.kills,
+              this.result.global_stats.squad.kills
+            ],
+            backgroundColor: barColor
+          }
+        ]
+      },
+      matchNumData: {
+        labels: barLabel,
+        datasets: [
+          {
+            data: [
+              this.result.global_stats.solo.matchesplayed,
+              this.result.global_stats.duo.matchesplayed,
+              this.result.global_stats.squad.matchesplayed
+            ],
+            backgroundColor: barColor
+          }
+        ]
+      },
+      placeTop1Data: {
+        labels: barLabel,
+        datasets: [
+          {
+            data: [
+              this.result.global_stats.solo.placetop1,
+              this.result.global_stats.duo.placetop1,
+              this.result.global_stats.squad.placetop1
+            ],
+            backgroundColor: barColor
+          }
+        ]
+      },
+      minutesplayedData: {
+        labels: barLabel,
+        datasets: [
+          {
+            data: [
+              this.result.global_stats.solo.minutesplayed / 60,
+              this.result.global_stats.duo.minutesplayed / 60,
+              this.result.global_stats.squad.minutesplayed / 60
+            ],
+            backgroundColor: barColor
+          }
+        ]
+      },
       resultSolo: this.result.global_stats.solo,
       resultDuo: this.result.global_stats.duo,
       resultSquad: this.result.global_stats.squad

@@ -2,11 +2,17 @@
   <b-container fluid>
     <h2>Fortnite-stats-viewer</h2>
     <b-form-group label="EpicアカウントID" label-for="account-id">
-      <p class="text-muted">EpicアカウントIDは<a href="https://www.epicgames.com/account/personal?productName=epicgames&lang=ja">ここ</a>から確認できます</p>
+      <p class="text-muted">
+        EpicアカウントIDは
+        <a
+          href="https://www.epicgames.com/account/personal?productName=epicgames&lang=ja"
+        >ここ</a>から確認できます
+      </p>
+      <b-alert :show="error.length > 0" variant="danger">{{error}}</b-alert>
       <b-form-input id="account-id" v-model="accountID" placeholder></b-form-input>
     </b-form-group>
-    <b-button @click="getGlobalStats(accountID)" variant="success">通算成績を見る</b-button>
-    <Result :result="result" v-if="result"/>
+    <b-button @click="getGlobalStats(accountID)" variant="primary">通算成績を見る</b-button>
+    <Result :result="result" v-if="result" />
   </b-container>
 </template>
 
@@ -21,11 +27,16 @@ export default {
   data() {
     return {
       accountID: "",
-      result: null
+      result: null,
+      error: ""
     };
   },
   methods: {
     getGlobalStats(id) {
+      if (!this.accountID) {
+        this.error = "IDを入力してください";
+        return;
+      }
       axios
         .get("https://fortnite-stats-viewer-api.herokuapp.com/global-stats", {
           params: {
@@ -33,7 +44,15 @@ export default {
           }
         })
         .then(res => {
-          this.result = res.data;
+          if (!res.data.result) {
+            this.error = res.data.error;
+          } else {
+            this.result = res.data;
+          }
+        })
+        .catch(err => {
+          this.error = "サーバーとの通信に失敗しました";
+          console.log(err);
         });
     },
     // とりあえずrecentMatchesは非対応
