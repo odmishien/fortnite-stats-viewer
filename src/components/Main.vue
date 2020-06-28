@@ -32,7 +32,11 @@ export default {
     };
   },
   methods: {
+    resetResult() {
+      this.result = null;
+    },
     getGlobalStats(id) {
+      this.resetResult();
       if (!this.accountID) {
         this.error = "IDを入力してください";
         return;
@@ -47,7 +51,11 @@ export default {
           if (!res.data.result) {
             this.error = res.data.error;
           } else {
-            this.result = res.data;
+            if (this.result) {
+              this.result = Object.assign(this.result, res.data);
+            } else {
+              this.result = res.data;
+            }
           }
         })
         .catch(err => {
